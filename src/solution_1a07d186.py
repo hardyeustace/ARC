@@ -1,34 +1,17 @@
 
 # coding: utf-8
 
-# In[78]:
+# In[11]:
 
 
 import pandas as pd
 import json
 import numpy as np
-
+# from itertools import izip
 
 def read_json_file(fileName):
     with open(fileName, 'r') as f:
         return json.load(f)   
-    
-# def will_be_vertical_line(no_rows, rows):
-#     """
-#     >>> will_be_vertical_line(10, [0, 9])
-#     True
-#     >>> will_be_vertical_line(10, [2, 9])
-#     False
-#     """
-#     return no_rows - 1 in rows and 0 in rows
-
-def get_dominant_vertical_lines(ip):
-    """
-    >>> get_dominant_vertical_lines(np.array([[1,0,2], [1,0,2], [1,0,2], [1,0,2],[1,0,2]]))
-    [1, 2]
-    """    
-    col_info = ([np.unique(col) for col in np.transpose(ip)])    
-    return [token[0] for token in col_info if len(token)==1 and token[0] != 0]
 
 def get_dominant_horizontal_lines(ip):
     """
@@ -38,55 +21,70 @@ def get_dominant_horizontal_lines(ip):
     row_info = ([np.unique(row) for row in ip]) 
     return [token[0] for token in row_info if len(token)==1 and token[0] != 0]
 
-
+def remove_unused_colours(ip, other_colours):
+    """
+    >>> remove_unused_colours(np.array([[0,0,3], [1,5,1], [2,0,6], [2,2,2],[4,4,0]]), (2, 4))
+    array([[0, 0, 0],
+           [0, 0, 0],
+           [2, 0, 0],
+           [2, 2, 2],
+           [4, 4, 0]])
+    """
+    
+    ip[(ip != 0) & (ip != other_colours[0]) & (ip != other_colours[1])] = 0
+    return ip
 
 def solve(df_io):    
-    """
-    >>> get_dominant_horizontal_lines(np.array([[0,0,0], [1,1,1], [1,0,0], [2,2,2],[0,0,0]]))
-    [1, 2]
-    """
     ip = np.array(df_io['input'])
     horizontal_lines = get_dominant_horizontal_lines(ip)
     
-    if(len(horizontal_lines) == 0):
-        vertical_lines = get_dominant_vertical_lines(ip)
-        ip[(ip != 0) & (ip != vertical_lines[0]) & (ip != vertical_lines[1])] = 0
-    else:      
-        ip[(ip != 0) & (ip != horizontal_lines[0]) & (ip != horizontal_lines[1])] = 0
-
-    print(ip)
-        
-    ##arr[arr > 255] = x
+    is_horizontal = (len(horizontal_lines) > 0)
+    if(not(is_horizontal)):
+        #transpose ip and treat as if horizontal and then transpose back at end
+        ip = np.transpose(ip)
+        horizontal_lines = get_dominant_horizontal_lines(ip)
+               
+          
+    ip = remove_unused_colours(ip, horizontal_lines)
+    row_info = ([np.unique(row) for row in ip])         
+    ip = stick_float_points_to_lines(ip, horizontal_lines)
     
-#     min_require = min(ip.shape)
-#     ip_counts = np.unique(ip, return_counts=True)
-#     #find ip_counts that are < row count or col count, these are to be deleted
-#     print(ip_counts[1])
-#     to_delete = [i for i in range(len(a)) if a[i] > 2]
-#     (rows, cols) = (np.nonzero(ip))
-#     is_vertical = will_be_vertical_line(ip.shape[0], rows)
-#     colours = (ip[rows[0]][cols[0]], ip[rows[1]][cols[1]])    
-#     if (is_vertical):
-#         col_diff = abs(cols[0] - cols[1]) * 2
-#         ip[:, cols[0]::col_diff] = colours[0]
-#         ip[:, cols[1]::col_diff] = colours[1]
-#     else:
-#         row_diff = abs(rows[0] - rows[1]) * 2
-#         ip[rows[0]::row_diff] = colours[0]
-#         ip[rows[1]::row_diff] = colours[1]
+    if(not(is_horizontal)):
+        ip = np.transpose(ip)
     
     return ip
 
+
+
+def stick_float_points_to_lines(ip, other_colours):
+    """
+    >>> stick_float_points_to_lines(np.array([[0, 0, 0, 2, 0], [0, 0, 0, 0, 0], [2, 2, 2, 2, 2], [0, 0, 0, 0, 0],[0, 0, 0, 0, 0],[4,4,4,4,4], [0, 0, 0, 0, 0],[0, 0, 4, 0, 0]]), (2, 4))
+    array([[0, 0, 0, 0, 0],
+           [0, 0, 0, 2, 0],
+           [2, 2, 2, 2, 2],
+           [0, 0, 0, 0, 0],
+           [0, 0, 0, 0, 0],
+           [4, 4, 4, 4, 4],
+           [0, 0, 4, 0, 0],
+           [0, 0, 0, 0, 0]])
+    """    
+    colour_lines = ([(each_colour, index) for index, value in enumerate(ip) for each_colour in set(other_colours) if np.array_equal(value, [each_colour] * ip.shape[1])])    
+    colour_points_arrays = [np.where(ip == each_colour) for each_colour in set(other_colours)]  
+
+    for i in range(0, len(colour_points_arrays)):
+        colour_points = list(zip(colour_points_arrays[i][0], colour_points_arrays[i][1]))
+        my_colour_line = [colour_line for colour_line in colour_lines if colour_line[0] == ip[colour_points[0]]][0]
+        moving_points = [colour_point for colour_point in colour_points if colour_point[0] != my_colour_line[1]]
+        new_points = [(my_colour_line[1] - 1 + (2 * int(moving_point[0] - my_colour_line[1] > 1)), moving_point[1]) for moving_point in moving_points]
+        ip[tuple(np.array(new_points).T)] = my_colour_line[0]
+        ip[tuple(np.array(moving_points).T)] = 0
+    return ip
+        
+ 
 def main():
     df = read_json_file('C:/dev/git/ARC/data/training/1a07d186.json')
-    solve(df['train'][0])
-#     for df in df['train']:
-#         print(np.array_equal(solve(df), df['output']))
-#     print(np.array_equal(solve(df['train'][1]), df['train'][1]['output']))
-    
-    
-#     for input_output in df['train']:
-#         print(input_output)
+    solve(df['train'][1])
+
     
         
     
