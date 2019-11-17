@@ -4,6 +4,7 @@
 # In[223]:
 
 
+
 import pandas as pd
 import json
 import numpy as np
@@ -143,12 +144,13 @@ def find_min_diff(rows, dps):
     
  
 def main():
-    df = read_json_file('C:/dev/git/ARC/data/training/1a07d186.json')
-    np.array_equal(solve(df['train'][1]['input']), df['train'][1]['output'])
-    for df in df['train']:
-        np.array_equal(solve(df['input']), df['output'])
-    for df in df['test']:
-        np.array_equal(solve(df['input']), df['output'])
+    df = read_json_file(argv[1])
+    for df1 in df['train']:
+        print(solve(df1))
+        print() 
+    for df2 in df['test']:
+        print(solve(df1))
+        print() 
     
         
     
@@ -156,5 +158,8 @@ if __name__ == "__main__":
     import doctest
     doctest.testmod()
     main()    
+    
+
+  
     
 
