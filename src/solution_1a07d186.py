@@ -143,7 +143,7 @@ def find_min_diff(rows, dps):
     
  
 def main():
-     df = read_json_file(argv[1])
+    df = read_json_file(argv[1])
     
     for df1 in df['train']:
         print(solve(df1['input']))
