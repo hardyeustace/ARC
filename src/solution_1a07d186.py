@@ -1,7 +1,7 @@
 
 # coding: utf-8
 
-# In[144]:
+# In[223]:
 
 
 import pandas as pd
@@ -35,18 +35,21 @@ def remove_unused_colours(ip, line_colours):
            [4, 4, 0]])
     """
     #get a list of all unique colours
+
     all_colours = list(np.unique(ip))
     #remove back ground colour 0
     all_colours.remove(0)
     #remove the line colours
-    for line_colour in all_colours:
+    for line_colour in line_colours:
         all_colours.remove(line_colour)
+            
     #for all other colours, (i.e. those not back ground colour of zero of line colours) turn to back ground colour = 0
     for each_colour in all_colours:
-        ip[each_colour] = 0
+        ip[np.where(ip == each_colour)]= 0
     return ip
 
-def solve(ip):    
+def solve(my_ip):    
+    ip = np.array(my_ip)
     #et the horizontal colours
     horizontal_line_colours = get_dominant_horizontal_line_colour(ip)
     #if there are horizontal line colours, it will tell us if it is horizontal or not
@@ -81,89 +84,71 @@ def stick_float_points_to_lines(ip, other_colours):
            [0, 0, 4, 0, 0],
            [0, 0, 0, 0, 0]])
     """    
-    
     for each_colour in other_colours:        
         #colours lines is a tuple which tells us colour and the line number(s) that colour is on
         colour_lines = ([(each_colour, index) for index, value in enumerate(ip) if np.array_equal(value, [each_colour] * len(ip[0]))])        
         #colour_points_arrays is a list of a double array, where the double array contains the row and coloumn indexes where the 
         #line colours are present
         colour_points_arrays = [np.where(ip == each_colour)]  
-        for colour_points_array in colour_points_arrays:
-            each_colour_lines = [i[1] for i in colour_lines]
-            print(each_colour_lines)
-            print(colour_points_array[0], colour_points_array[1])
-            print(new_row(1, each_colour_lines))
-#             print(new_row(colour_points_array[0], [i[1] for i in colour_lines]), colour_points_array[1])
-            
-#         print(type(colour_points_arrays[0][0]), type(colour_points_arrays[0][1]))
-#        print(colour_points_arrays[0][0], colour_points_arrays[0][1])
-#         print(colour_points_arrays[0][0], colour_points_arrays[0][1])
-#         print(colour_lines)
-#         print(new_row(colour_points_arrays[0][0], [2]), colour_points_arrays[0][1])
-#         print(list(colour_points_arrays[0][1]).element(2))
-#         [x for x in mylist if x in pattern]
-#         print(ip[(1, 2, 3), (2, 3, 4)])
-#         print(ip[[1, 2], [2, 2]])
-#         print(ip[np.array([1, 2]), np.array([2, 2])])
-#         print(ncolour_points_arrays[0][0])
-#         print(ip[colour_points_arrays[0][0], colour_points_arrays[0][1]])
-#         print(ip[[colour_points_array[0]][colour_points_array[1]]])
-#         print(colour_points_arrays[1])
-#         for i in range(0, len(colour_points_arrays)):
-            #here we zip toget the double array of row and column indexes to get a list of tuples with the x, y coordinates of 
-            #the colours
-#             colour_points = list(zip(colour_points_arrays[i][0], colour_points_arrays[i][1]))        
-#             moving_points = [colour_point for colour_point in colour_points if colour_point[0] != my_colour_line[1]]
-#             new_points = [(my_colour_line[1] - 1 + (2 * int(moving_point[0] - my_colour_line[1] > 1)), moving_point[1]) for moving_point in moving_points]
-#             ip[tuple(np.array(new_points).T)] = my_colour_line[0]
-#             ip[tuple(np.array(moving_points).T)] = 0
-    return ip
-# addition = lambda x: x + 2
- 
-# a = numpy.array([1, 2, 3, 4, 5, 6])
- 
-# print("Array after addition function: ", addition(a))        
+        new_rows = new_row(colour_points_arrays[0][0], [i[1] for i in colour_lines])
+        #clear the old rows
+        for each_obj in list(zip(colour_points_arrays[0][0], colour_points_arrays[0][1])):
+            ip[each_obj] = 0
+        #populate the new
+        for each_obj in list(zip(new_rows, colour_points_arrays[0][1])):
+            ip[each_obj] = each_colour
 
-def new_row(x, colour_lines):
+
+    return ip
+      
+
+def new_row(current_rows, colour_lines):
     """
-    >>> new_row(0, [2, 4])
-    1
-    >>> new_row(2, [2, 3])
-    2
-    >>> new_row(1, [2, 1])
-    1
-    >>> new_row(1, [2])
-    1
-    >>> new_row(3, [2])
-    3
-    >>> new_row(4, [2])
-    3
-    >>> new_row(5, [2])
-    3
+    >>> new_row([0], np.array([2, 4]))
+    [1]
+    >>> new_row([2], np.array([2, 3]))
+    [2]
+    >>> new_row([1], np.array([2, 1]))
+    [1]
+    >>> new_row([1], np.array([2]))
+    [1]
+    >>> new_row([3], np.array([2]))
+    [3]
+    >>> new_row([4], np.array([2]))
+    [3]
+    >>> new_row([5], np.array([2]))
+    [3]
+    >>> new_row([2, 0, 6], np.array([4, 2]))
+    [2, 1, 5]
     """
-    nearest_row = find_min_diff(x, colour_lines)
-    return nearest_row - int((x - nearest_row) < 0) + int((x - nearest_row) > 0)
+    nearest_rows = find_min_diff(current_rows, colour_lines)
+    return [nearest_row - int((current_row - nearest_row) < 0) + int((current_row - nearest_row) > 0) for current_row, nearest_row in zip(current_rows, nearest_rows)]
+
     
 
-def find_min_diff(x, data_points):
+def find_min_diff(rows, dps):
     """
-    >>> find_min_diff(3, {44, 6, 8, 7, 15})
-    6
-    >>> find_min_diff(3, {1, 3, 8, 7, 5})
-    3
-    >>> find_min_diff(4, {2})
-    2
+    >>> find_min_diff([3], np.array([44, 6, 8, 7, 15]))
+    [6]
+    >>> find_min_diff([3], np.array([1, 3, 8, 7, 5]))
+    [3]
+    >>> find_min_diff([4], np.array([2]))
+    [2]
+    >>> find_min_diff([4, 3, 8], np.array([44, 6, 8, 7, 15]))
+    [6, 6, 8]
     """
-    diff = [(abs(dp - x), dp) for dp in data_points]
-    return [y for x, y in diff if x==min(diff)[0]][0]
+    row_diffs = [(abs(dps - row)) for row in rows]
+    row_indexes = ([np.argmin(row_diff) for row_diff in row_diffs])
+    return [dps[row_index] for row_index in row_indexes]
     
  
 def main():
     df = read_json_file('C:/dev/git/ARC/data/training/1a07d186.json')
     np.array_equal(solve(df['train'][1]['input']), df['train'][1]['output'])
-#     for df in df['train']:
-#         print(np.array_equal(solve(df), df['output']))
-
+    for df in df['train']:
+        np.array_equal(solve(df['input']), df['output'])
+    for df in df['test']:
+        np.array_equal(solve(df['input']), df['output'])
     
         
     
