@@ -1,7 +1,7 @@
 
 # coding: utf-8
 
-# In[9]:
+# In[10]:
 
 
 import pandas as pd
@@ -24,7 +24,7 @@ def will_be_vertical_line(no_rows, rows):
     return no_rows - 1 in rows and 0 in rows
     
 def solve(df_io):
-    ip = np.array(df_io['input'])
+    ip = np.array(df_io)
     (rows, cols) = (np.nonzero(ip))
     is_vertical = will_be_vertical_line(ip.shape[0], rows)
     colours = (ip[rows[0]][cols[0]], ip[rows[1]][cols[1]])    
@@ -39,15 +39,16 @@ def solve(df_io):
     
     return ip
 
+
 def main():
     df = read_json_file(argv[1])
+    
     for df1 in df['train']:
-        print(solve(df1))
+        print(solve(df1['input']))
         print() 
     for df2 in df['test']:
-        print(solve(df1))
+        print(solve(df1['input']))
         print() 
-
     
         
     
