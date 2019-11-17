@@ -1,7 +1,7 @@
 
 # coding: utf-8
 
-# In[17]:
+# In[8]:
 
 
 import pandas as pd
@@ -40,13 +40,13 @@ def solve(df_io):
 
 def main():
     df = read_json_file('C:/dev/git/ARC/data/training/0a938d79.json')
-    for df in df['train']:
-        print(np.array_equal(solve(df), df['output']))
-#     print(np.array_equal(solve(df['train'][1]), df['train'][1]['output']))
-    
-    
-#     for input_output in df['train']:
-#         print(input_output)
+    for df1 in df['train']:
+        print(solve(df1))
+        print() 
+    for df2 in df['test']:
+        print(solve(df1))
+        print() 
+
     
         
     
