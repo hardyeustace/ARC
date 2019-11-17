@@ -1,7 +1,7 @@
 
 # coding: utf-8
 
-# In[223]:
+# In[224]:
 
 
 import pandas as pd
@@ -143,12 +143,13 @@ def find_min_diff(rows, dps):
     
  
 def main():
-    df = read_json_file(argv[1])
+     df = read_json_file(argv[1])
+    
     for df1 in df['train']:
-        print(solve(df1))
+        print(solve(df1['input']))
         print() 
     for df2 in df['test']:
-        print(solve(df1))
+        print(solve(df1['input']))
         print() 
     
         
