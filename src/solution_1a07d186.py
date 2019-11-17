@@ -4,11 +4,10 @@
 # In[223]:
 
 
-
 import pandas as pd
 import json
 import numpy as np
-# from itertools import izip
+from sys import argv
 
 def read_json_file(fileName):
     with open(fileName, 'r') as f:
