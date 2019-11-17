@@ -1,12 +1,13 @@
 
 # coding: utf-8
 
-# In[8]:
+# In[9]:
 
 
 import pandas as pd
 import json
 import numpy as np
+from sys import argv
 
 
 def read_json_file(fileName):
@@ -39,7 +40,7 @@ def solve(df_io):
     return ip
 
 def main():
-    df = read_json_file('C:/dev/git/ARC/data/training/0a938d79.json')
+    df = read_json_file(argv[1])
     for df1 in df['train']:
         print(solve(df1))
         print() 
