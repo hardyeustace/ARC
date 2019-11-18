@@ -18,8 +18,11 @@ def will_be_vertical_line(no_rows, rows):
     
 def solve(df_io):
     ip = np.array(df_io)
+	#find non zero coordinates
     (rows, cols) = (np.nonzero(ip))
+	#define if the lines to be drawn will be horizontal or vertical
     is_vertical = will_be_vertical_line(ip.shape[0], rows)
+	#find the colours to draw with
     colours = (ip[rows[0]][cols[0]], ip[rows[1]][cols[1]])    
     if (is_vertical):
         col_diff = abs(cols[0] - cols[1]) * 2

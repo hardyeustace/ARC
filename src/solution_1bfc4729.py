@@ -11,17 +11,22 @@ def find_colours(ip):
     >>> find_colours(np.array([[0, 0, 0, 0, 0, 0, 0, 0, 0, 0], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0], [0, 0, 0, 0, 0, 0, 1, 0, 0, 0], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0], [0, 0, 0, 0, 0, 4, 0, 0, 0, 0], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0]]))
     [1, 4]
     """
+	#get all the colours 
     all_colours = list(np.unique(ip))    
     all_colours.remove(0)
+	#tuple which contains each colour and and the co-ordinates of the coloured dots
     where_colours = [(each_colour, np.where(ip == each_colour)) for each_colour in all_colours]
+	#return a list where the upper most colour in the grid is first element in the list
     if (where_colours[0][1][0] < where_colours[1][1][0]):
         return [where_colours[0][0], where_colours[1][0]]
     else:
         return [where_colours[1][0], where_colours[0][0]]
 
 def colour_in_upper_ip(ip, my_colour):
+    #fill in the top most row and the 3rd most row
     ip[0] = [my_colour] * 10
     ip[2] = [my_colour] * 10
+	#fill in the outmost columns, half way down
     ip[0:5, 0] = [my_colour] * 5
     ip[0:5, 9] = [my_colour] * 5
     return ip
