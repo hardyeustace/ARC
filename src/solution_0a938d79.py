@@ -80,7 +80,7 @@ def main():
             print(' '.join(map(str, row)))
         print() 
     for df2 in df['test']:
-        for row in solve(df1['input']):
+        for row in solve(df2['input']):
             print(' '.join(map(str, row)))
         print() 
     
