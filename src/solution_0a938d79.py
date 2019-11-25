@@ -1,3 +1,10 @@
+
+# coding: utf-8
+
+# In[14]:
+
+
+import pandas as pd
 import json
 import numpy as np
 from sys import argv
@@ -17,6 +24,31 @@ def will_be_vertical_line(no_rows, rows):
     return no_rows - 1 in rows and 0 in rows
     
 def solve(df_io):
+    """
+    >>> solve(np.array([[0, 0, 0, 0, 0, 0, 0, 0, 0], [0, 0, 0, 0, 0, 0, 0, 0, 0], [0, 0, 0, 0, 0, 0, 0, 0, 0], [0, 0, 0, 0, 0, 0, 0, 0, 0], [0, 0, 0, 0, 0, 0, 0, 0, 0], [2, 0, 0, 0, 0, 0, 0, 0, 0], [0, 0, 0, 0, 0, 0, 0, 0, 0], [0, 0, 0, 0, 0, 0, 0, 0, 3], [0, 0, 0, 0, 0, 0, 0, 0, 0], [0, 0, 0, 0, 0, 0, 0, 0, 0], [0, 0, 0, 0, 0, 0, 0, 0, 0], [0, 0, 0, 0, 0, 0, 0, 0, 0], [0, 0, 0, 0, 0, 0, 0, 0, 0], [0, 0, 0, 0, 0, 0, 0, 0, 0], [0, 0, 0, 0, 0, 0, 0, 0, 0], [0, 0, 0, 0, 0, 0, 0, 0, 0], [0, 0, 0, 0, 0, 0, 0, 0, 0], [0, 0, 0, 0, 0, 0, 0, 0, 0], [0, 0, 0, 0, 0, 0, 0, 0, 0], [0, 0, 0, 0, 0, 0, 0, 0, 0], [0, 0, 0, 0, 0, 0, 0, 0, 0], [0, 0, 0, 0, 0, 0, 0, 0, 0]]))
+    array([[0, 0, 0, 0, 0, 0, 0, 0, 0],
+           [0, 0, 0, 0, 0, 0, 0, 0, 0],
+           [0, 0, 0, 0, 0, 0, 0, 0, 0],
+           [0, 0, 0, 0, 0, 0, 0, 0, 0],
+           [0, 0, 0, 0, 0, 0, 0, 0, 0],
+           [2, 2, 2, 2, 2, 2, 2, 2, 2],
+           [0, 0, 0, 0, 0, 0, 0, 0, 0],
+           [3, 3, 3, 3, 3, 3, 3, 3, 3],
+           [0, 0, 0, 0, 0, 0, 0, 0, 0],
+           [2, 2, 2, 2, 2, 2, 2, 2, 2],
+           [0, 0, 0, 0, 0, 0, 0, 0, 0],
+           [3, 3, 3, 3, 3, 3, 3, 3, 3],
+           [0, 0, 0, 0, 0, 0, 0, 0, 0],
+           [2, 2, 2, 2, 2, 2, 2, 2, 2],
+           [0, 0, 0, 0, 0, 0, 0, 0, 0],
+           [3, 3, 3, 3, 3, 3, 3, 3, 3],
+           [0, 0, 0, 0, 0, 0, 0, 0, 0],
+           [2, 2, 2, 2, 2, 2, 2, 2, 2],
+           [0, 0, 0, 0, 0, 0, 0, 0, 0],
+           [3, 3, 3, 3, 3, 3, 3, 3, 3],
+           [0, 0, 0, 0, 0, 0, 0, 0, 0],
+           [2, 2, 2, 2, 2, 2, 2, 2, 2]])
+    """
     ip = np.array(df_io)
 	#find non zero coordinates
     (rows, cols) = (np.nonzero(ip))
@@ -37,13 +69,22 @@ def solve(df_io):
 
 
 def main():
+#     USED FOR TESTING    
+#     df1 = read_json_file("c:/dev/git/ARC/data/training/0a938d79.json")     
+#     for df in df1['train']:
+#         print(np.array_equal(solve(df['input']), df['output']))
+#     for df in df1['test']:
+#         print(np.array_equal(solve(df['input']), df['output']))
+
     df = read_json_file(argv[1])
     
     for df1 in df['train']:
-        print(solve(df1['input']))
+        for row in solve(df1['input']):
+            print(' '.join(map(str, row)))
         print() 
     for df2 in df['test']:
-        print(solve(df1['input']))
+        for row in solve(df2['input']):
+            print(' '.join(map(str, row)))
         print() 
     
         

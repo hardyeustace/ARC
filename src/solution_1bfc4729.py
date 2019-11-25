@@ -1,3 +1,10 @@
+
+# coding: utf-8
+
+# In[26]:
+
+
+import pandas as pd
 import json
 import numpy as np
 from sys import argv
@@ -32,6 +39,19 @@ def colour_in_upper_ip(ip, my_colour):
     return ip
     
 def solve(my_ip):
+    """
+    >>> solve(np.array([[0, 0, 0, 0, 0, 0, 0, 0, 0, 0], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0], [0, 0, 6, 0, 0, 0, 0, 0, 0, 0], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0], [0, 0, 0, 0, 0, 0, 0, 7, 0, 0], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0], [0, 0, 0, 0, 0, 0, 0, 0, 0, 0]]))
+    array([[6, 6, 6, 6, 6, 6, 6, 6, 6, 6],
+           [6, 0, 0, 0, 0, 0, 0, 0, 0, 6],
+           [6, 6, 6, 6, 6, 6, 6, 6, 6, 6],
+           [6, 0, 0, 0, 0, 0, 0, 0, 0, 6],
+           [6, 0, 0, 0, 0, 0, 0, 0, 0, 6],
+           [7, 0, 0, 0, 0, 0, 0, 0, 0, 7],
+           [7, 0, 0, 0, 0, 0, 0, 0, 0, 7],
+           [7, 7, 7, 7, 7, 7, 7, 7, 7, 7],
+           [7, 0, 0, 0, 0, 0, 0, 0, 0, 7],
+           [7, 7, 7, 7, 7, 7, 7, 7, 7, 7]])
+    """
     ip = np.array(my_ip)
     #list keeps the order so we know which colour goes on top
     all_colours = find_colours(ip)
@@ -41,19 +61,28 @@ def solve(my_ip):
     #fill in top and bottom pattern
     ip = colour_in_upper_ip(ip, all_colours[0])
     ip = np.flipud(ip)
-    ip = colour_in_upper_ip(ip, all_colours[0])
+    ip = colour_in_upper_ip(ip, all_colours[1])
     return np.flipud(ip)
     
  
 
 def main():
+#     USED FOR TESTING    
+#     df1 = read_json_file("c:/dev/git/ARC/data/training/1bfc4729.json")     
+#     for df in df1['train']:
+#         print(np.array_equal(solve(df['input']), df['output']))
+#     for df in df1['test']:
+#         print(np.array_equal(solve(df['input']), df['output']))
+
     df = read_json_file(argv[1])
     
     for df1 in df['train']:
-        print(solve(df1['input']))
+        for row in solve(df1['input']):
+            print(' '.join(map(str, row)))
         print() 
     for df2 in df['test']:
-        print(solve(df1['input']))
+        for row in solve(df2['input']):
+            print(' '.join(map(str, row)))
         print() 
     
         
